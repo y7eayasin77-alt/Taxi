@@ -3,3 +3,200 @@
 
 # Ada Library Information
 *.ali
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lightning Taxi AB - Norrköping</title>
+    <style>
+        :root {
+            --primary-color: #f39c12;
+            --dark-bg: #1a1a1a;
+            --light-bg: #f9f9f9;
+            --text-color: #333;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--light-bg);
+            color: var(--text-color);
+            direction: ltr;
+        }
+        header {
+            background-color: var(--dark-bg);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-bottom: 4px solid var(--primary-color);
+        }
+        header h1 {
+            margin: 0;
+            font-size: 2.2rem;
+            color: var(--primary-color);
+        }
+        header p {
+            margin: 5px 0 0;
+            font-size: 1.1rem;
+            color: #ccc;
+        }
+        .container {
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 20px;
+            background: white;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            border-radius: 8px;
+        }
+        .section-title {
+            color: var(--dark-bg);
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 8px;
+            margin-top: 0;
+        }
+        .booking-box {
+            background: #fff8e1;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid var(--primary-color);
+        }
+        .booking-box label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+        .booking-box input {
+            width: 100%;
+            padding: 12px;
+            font-size: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        .cta-box {
+            text-align: center;
+            background: var(--dark-bg);
+            color: white;
+            padding: 30px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+        .btn-call {
+            display: inline-block;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 15px 30px;
+            font-size: 1.3rem;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: bold;
+            margin-top: 15px;
+            transition: background 0.3s;
+        }
+        .btn-call:hover {
+            background-color: #d68910;
+        }
+        #map {
+            width: 100%;
+            height: 350px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+        footer {
+            text-align: center;
+            padding: 15px;
+            background: var(--dark-bg);
+            color: #888;
+            margin-top: 30px;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Lightning Taxi AB</h1>
+        <p>Din säkra och snabba taxiresa i Norrköping</p>
+    </header>
+
+    <div class="container">
+        <h2 class="section-title">Boka eller Planera din resa</h2>
+        
+        <!-- حقل عنوان الإركاب مع ميزة الإكمال التلقائي -->
+        <div class="booking-box">
+            <label for="pickup-input">📍 Ange upphämtningsadress (Hämtas i Norrköping):</label>
+            <input id="pickup-input" type="text" placeholder="Skriv gatuadress här (t.ex. Drottninggatan)...">
+        </div>
+
+        <div class="cta-box">
+            <h2>Behöver du skjuts direkt?</h2>
+            <p>Ring oss nu för snabb upphämtning!</p>
+            <a href="tel:0762811873" class="btn-call">Ring 076-281 18 73</a>
+        </div>
+
+        <h3 class="section-title" style="margin-top: 30px;">Hitta oss i Norrköping</h3>
+        <div id="map"></div>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 Lightning Taxi AB | E-post: y7ea.yasin77@gmail.com | Norrköping, Sverige</p>
+    </footer>
+
+    <!-- سكربت خرائط جوجل وتفعيل مكتبة Places للأوتوكومبليت -->
+    <script>
+        function initMap() {
+            // إحداثيات نورشوبينك
+            var norrköping = { lat: 58.5877, lng: 16.1924 };
+            
+            var map = new google.maps.Map(document.getElementById('map'), {
+                zoom: 13,
+                center: norrköping
+            });
+
+            var marker = new google.maps.Marker({
+                position: norrköping,
+                map: map,
+                title: 'Lightning Taxi AB - Norrköping'
+            });
+
+            // تفعيل ميزة الإكمال التلقائي (Autocomplete) لحقل الإدخال
+            var input = document.getElementById('pickup-input');
+            
+            // تحديد نطاق البحث في السويد لتكون المقترحات دقيقة
+            var options = {
+                componentRestrictions: { country: 'se' },
+                fields: ['address_components', 'geometry', 'icon', 'name'],
+                strictBounds: false
+            };
+
+            var autocomplete = new google.maps.places.Autocomplete(input, options);
+            
+            // ربط الأوتوكومبليت بالخريطة لتحديد الموقع عند اختياره
+            autocomplete.bindTo('bounds', map);
+
+            autocomplete.addListener('place_changed', function() {
+                var place = autocomplete.getPlace();
+                if (!place.geometry) {
+                    window.alert("Ingen information hittades för denna adress.");
+                    return;
+                }
+
+                // تحريك الخريطة وإظهار العلامة على العنوان الذي اختاره الزبون
+                if (place.geometry.viewport) {
+                    map.fitBounds(place.geometry.viewport);
+                } else {
+                    map.setCenter(place.geometry.location);
+                    map.setZoom(17);
+                }
+                marker.setPosition(place.geometry.location);
+            });
+        }
+    </script>
+    
+    <!-- ملاحظة: تم تفعيل مكتبة libraries=places في الرابط أدناه لكي تعمل الخاصية -->
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyArkgWp0naTV413hleUrWBwxBRGX8jA3As&libraries=places&callback=initMap"></script>
+
+</body>
+</html>
